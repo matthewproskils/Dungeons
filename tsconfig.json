@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["esnext", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "react",
+    "allowJs": true,
+    "sourceMap": true,
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "outDir": "js",
+    "watch": true
+  },
+  "include": ["ts/**/*"],
+  "exclude": ["./node_modules/**/*"],
+}

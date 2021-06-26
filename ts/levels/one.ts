@@ -100,13 +100,13 @@ export default class levelOne {
   }
   constructor() {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key == "ArrowUp") {
+      if (e.key == "ArrowUp" || e.key == "w") {
         this.GameStats.player.facing = "up";
-      } else if (e.key == "ArrowDown") {
+      } else if (e.key == "ArrowDown" || e.key == "s") {
         this.GameStats.player.facing = "down";
-      } else if (e.key == "ArrowRight") {
+      } else if (e.key == "ArrowRight" || e.key == "d") {
         this.GameStats.player.facing = "right";
-      } else if (e.key == "ArrowLeft") {
+      } else if (e.key == "ArrowLeft" || e.key == "a") {
         this.GameStats.player.facing = "left";
       }
     })

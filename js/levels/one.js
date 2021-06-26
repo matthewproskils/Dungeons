@@ -11,12 +11,14 @@ export default class levelOne {
         this.GameStats = {
             player: {
                 pos: {
-                    x: 0,
-                    y: 0,
+                    x: 1,
+                    y: 1,
                 },
+                width: 1,
+                height: 1,
                 facing: "right",
                 position: 0,
-                speed: 100
+                speed: 1
             },
             tilemap: {
                 tiles: [
@@ -64,53 +66,26 @@ export default class levelOne {
             }
         };
         this.collisionBoundaries = [
-            [
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                },
-                {
-                    "x": 0,
-                    "y": 40
-                }
-            ]
+            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }, { x: 0, y: 5 }, { x: 0, y: 6 }, { x: 0, y: 7 }, { x: 0, y: 8 }, { x: 0, y: 9 }, { x: 0, y: 10 }, { x: 0, y: 11 }, { x: 0, y: 12 }, { x: 0, y: 13 }, { x: 0, y: 14 }, { x: 1, y: 0 }, { x: 1, y: 14 }, { x: 2, y: 0 }, { x: 2, y: 14 }, { x: 3, y: 0 }, { x: 3, y: 14 }, { x: 4, y: 0 }, { x: 4, y: 14 }, { x: 5, y: 0 }, { x: 5, y: 14 }, { x: 6, y: 0 }, { x: 6, y: 14 }, { x: 7, y: 0 }, { x: 7, y: 14 }, { x: 8, y: 0 }, { x: 8, y: 14 }, { x: 9, y: 0 }, { x: 9, y: 1 }, { x: 9, y: 2 }, { x: 9, y: 3 }, { x: 9, y: 4 }, { x: 9, y: 5 }, { x: 9, y: 6 }, { x: 9, y: 7 }, { x: 9, y: 8 }, { x: 9, y: 9 }, { x: 9, y: 10 }, { x: 9, y: 11 }, { x: 9, y: 12 }, { x: 9, y: 13 }, { x: 9, y: 14 }
         ];
         this.Sprites = {
             Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png" },
             LoadedSprites: {}
         };
+        window.addEventListener("keydown", (e) => {
+            if (e.key == "ArrowUp") {
+                this.GameStats.player.facing = "up";
+            }
+            else if (e.key == "ArrowDown") {
+                this.GameStats.player.facing = "down";
+            }
+            else if (e.key == "ArrowRight") {
+                this.GameStats.player.facing = "right";
+            }
+            else if (e.key == "ArrowLeft") {
+                this.GameStats.player.facing = "left";
+            }
+        });
     }
     async init() {
         //Stretch Canvas
@@ -124,29 +99,88 @@ export default class levelOne {
         this.Sprites.LoadedSprites = await loadImages(this.Sprites.Locations);
         requestAnimationFrame((t) => { this.gameFrame(t); });
     }
+    setVars() {
+        this.GameStats = {
+            player: {
+                pos: {
+                    x: 1,
+                    y: 1,
+                },
+                width: 1,
+                height: 1,
+                facing: "right",
+                position: 0,
+                speed: 1
+            },
+            tilemap: {
+                tiles: [
+                    [
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+                    ],
+                    [
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                    ]
+                ],
+                tileStats: {
+                    width: 10,
+                    height: 10
+                },
+                width: 15,
+                height: 10
+            },
+            Time: {
+                LastFrameAnimation: 0,
+                Time: 0
+            }
+        };
+        //Stretch Canvas
+        this.resizeCanvas();
+        window.onresize = () => { this.resizeCanvas(); };
+        requestAnimationFrame((t) => { this.gameFrame(t); });
+    }
     gameFrame(timestamp) {
         if (this.GameStats.Time.Time == 0) {
             this.GameStats.Time.Time = timestamp;
+            requestAnimationFrame((t) => { this.gameFrame(t); });
         }
         else {
-            this.GameStats.player.pos.x -= this.GameStats.player.speed * ((this.GameStats.Time.Time - timestamp) / 1000);
-            console.log(this.GameStats.player.pos);
             this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);
             this.drawTilemap();
             this.drawSprite(this.GameStats.player.pos.x, this.GameStats.player.pos.y);
+            let x = this.movement(timestamp);
             this.GameStats.Time.Time = timestamp;
-            if (this.GameStats.Time.LastFrameAnimation == 0) {
-                this.GameStats.player.position == 2 ? this.GameStats.player.position = 0 : this.GameStats.player.position++;
-                this.GameStats.Time.LastFrameAnimation++;
-            }
-            else if (this.GameStats.Time.LastFrameAnimation == 5) {
-                this.GameStats.Time.LastFrameAnimation = 0;
+            if (!x) {
+                requestAnimationFrame((t) => { this.gameFrame(t); });
             }
             else {
-                this.GameStats.Time.LastFrameAnimation++;
+                alert("Ur Dead. We're restarting");
+                this.setVars();
             }
         }
-        requestAnimationFrame((t) => { this.gameFrame(t); });
     }
     resizeCanvas() {
         if (window.innerWidth / (this.Canvas.OriginalCanvas.width / this.Canvas.Canvas.height) <= window.innerHeight) {
@@ -162,7 +196,15 @@ export default class levelOne {
         }
         this.Canvas.Tw = this.Canvas.Canvas.width / 15;
         this.Canvas.Th = this.Canvas.Canvas.height / 10;
+        //@ts-ignore
+        this.Canvas.Ctx.mozImageSmoothingEnabled = false;
+        //@ts-ignore
+        this.Canvas.Ctx.webkitImageSmoothingEnabled = false;
+        //@ts-ignore
+        this.Canvas.Ctx.msImageSmoothingEnabled = false;
         this.Canvas.Ctx.imageSmoothingEnabled = false;
+        //Set Speed
+        this.GameStats.player.speed = 5 / (Math.round((window.outerWidth / window.innerWidth) * 100) * 0.01);
     }
     drawSprite(Cx, Cy) {
         let y = 0;
@@ -180,7 +222,61 @@ export default class levelOne {
                 y = 3;
                 break;
         }
-        this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.player, this.GameStats.player.position * 15, y * 15, 15, 15, Cx, Cy, this.Canvas.Tw, this.Canvas.Th);
+        this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.player, this.GameStats.player.position * 15, y * 15, 15, 15, Cx * this.Canvas.Tw, Cy * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+    }
+    movement(timestamp) {
+        if (this.GameStats.player.facing == "right") {
+            this.GameStats.player.pos.x += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+        }
+        else if (this.GameStats.player.facing == "left") {
+            this.GameStats.player.pos.x -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+        }
+        else if (this.GameStats.player.facing == "down") {
+            this.GameStats.player.pos.y += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+        }
+        else if (this.GameStats.player.facing == "up") {
+            this.GameStats.player.pos.y -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+        }
+        if (!this.collisionList({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, this.collisionBoundaries.map(e => {
+            return { width: 1, height: 1, x: e.y, y: e.x };
+        }))) {
+            if (this.GameStats.Time.LastFrameAnimation == 0) {
+                this.GameStats.player.position == 2 ? this.GameStats.player.position = 0 : this.GameStats.player.position++;
+                this.GameStats.Time.LastFrameAnimation++;
+            }
+            else if (this.GameStats.Time.LastFrameAnimation == 5) {
+                this.GameStats.Time.LastFrameAnimation = 0;
+            }
+            else {
+                this.GameStats.Time.LastFrameAnimation++;
+            }
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    collision(obj1, obj2) {
+        if (obj1.x < obj2.x + obj2.width &&
+            obj1.x + obj1.width > obj2.x &&
+            obj1.y < obj2.y + obj2.height &&
+            obj1.y + obj1.height > obj2.y) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    collisionList(obj, list) {
+        let isCollision = false;
+        let collided = false;
+        for (let i = 0; i < list.length; i++) {
+            if (this.collision(obj, list[i])) {
+                collided = true;
+                break;
+            }
+        }
+        return collided;
     }
     drawTilemap() {
         this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);

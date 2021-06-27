@@ -109,35 +109,35 @@ export default class levelOne {
         tiles:
           [
             [
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
-              1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+              1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
             ],
             [
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            ]
+            ],
           ],
         tileStats: {
           width: 10,
@@ -174,7 +174,7 @@ export default class levelOne {
         this.collisionEnemies();
         this.collisionCoins();
         let ended = this.collisionDoor();
-        if(ended){
+        if (ended) {
           alert("Good Job You completed it")
         } else {
           this.renderDoor();
@@ -188,7 +188,7 @@ export default class levelOne {
             this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t) });
           } else if (x == "c") {
             this.setVars();
-          }            
+          }
         }
       }
     }
@@ -196,14 +196,14 @@ export default class levelOne {
 
   renderDoor() {
     if (this.GameStats.door.opened) {
-      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 16, 0, 16, 16, (this.GameStats.door.x-1) * this.Canvas.Tw, (this.GameStats.door.y-1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 16, 0, 16, 16, (this.GameStats.door.x - 1) * this.Canvas.Tw, (this.GameStats.door.y - 1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
     } else {
-      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 0, 0, 16, 16, (this.GameStats.door.x-1) * this.Canvas.Tw, (this.GameStats.door.y-1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 0, 0, 16, 16, (this.GameStats.door.x - 1) * this.Canvas.Tw, (this.GameStats.door.y - 1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
     }
   }
 
   collisionDoor() {
-    if (this.collision({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, { x: this.GameStats.door.x-1, y: this.GameStats.door.y-1, width: 1, height: 1 }) && this.GameStats.door.opened) {
+    if (this.collision({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, { x: this.GameStats.door.x - 1, y: this.GameStats.door.y - 1, width: 1, height: 1 }) && this.GameStats.door.opened) {
       return true;
     } else {
       return false;
@@ -307,7 +307,7 @@ export default class levelOne {
       if (this.GameStats.coins[i].count == 10) {
         this.GameStats.coins[i].count = 0;
         if (this.GameStats.coins[i].pos == 8) {
-          this.GameStats.coins[i].pos = 0          
+          this.GameStats.coins[i].pos = 0
         } else {
           this.GameStats.coins[i].pos++
         }
@@ -354,13 +354,13 @@ export default class levelOne {
 
   renderEnemies() {
     for (let i = 0; i < this.GameStats.enemies.length; i++) {
-      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.enemy, 0, 0, 16, 16, (this.GameStats.enemies[i].x-1) * this.Canvas.Tw, (this.GameStats.enemies[i].y-1.5) * this.Canvas.Tw, this.Canvas.Tw, this.Canvas.Th);
+      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.enemy, 0, 0, 16, 16, (this.GameStats.enemies[i].x - 1) * this.Canvas.Tw, (this.GameStats.enemies[i].y - 1.5) * this.Canvas.Tw, this.Canvas.Tw, this.Canvas.Th);
     }
   }
-  
+
   collisionEnemies() {
     for (let i = 0; i < this.GameStats.enemies.length; i++) {
-      if (this.collision({ x: this.GameStats.enemies[i].x-1, y: this.GameStats.enemies[i].y-1, width: 1, height: 1 }, { x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height })) {
+      if (this.collision({ x: this.GameStats.enemies[i].x - 1, y: this.GameStats.enemies[i].y - 1, width: 1, height: 1 }, { x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height })) {
         this.setVars();
         return;
       }
@@ -409,35 +409,35 @@ export default class levelOne {
       tiles:
         [
           [
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
-            1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+            1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
           ],
           [
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-          ]
+          ],
         ],
       tileStats: {
         width: 10,
@@ -460,10 +460,9 @@ export default class levelOne {
     this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);
     for (let i = 0; i < this.GameStats.tilemap.tiles.length; i++) {
       for (let j = 0; j < this.GameStats.tilemap.tiles[i].length; j++) {
-        let imageStats = this.imageStats(this.GameStats.tilemap.tiles[i][j]);
         this.Canvas.Ctx.drawImage(
           this.Sprites.LoadedSprites.tileMap,
-          imageStats.x * 10, imageStats.y * 10, 10, 10,
+          0, (this.GameStats.tilemap.tiles[i][j] - 1) * 10, 10, 10,
           j * this.Canvas.Tw, i * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th
         );
       }
@@ -475,7 +474,7 @@ export default class levelOne {
   }
 
   Sprites: any = {
-    Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png", coin: "static/Coin.png", enemy: "static/Enemy.png", door: "static/Door.png"},
+    Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png", coin: "static/Coin.png", enemy: "static/Enemy.png", door: "static/Door.png" },
     LoadedSprites: {}
   }
 }

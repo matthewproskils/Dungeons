@@ -20,6 +20,11 @@ export default class levelOne {
         };
         this.continue = true;
         this.GameStats = {
+            door: {
+                opened: false,
+                x: 14,
+                y: 9,
+            },
             coins: [
                 {
                     x: 10,
@@ -32,6 +37,12 @@ export default class levelOne {
                     y: 5,
                     pos: 0,
                     count: 0
+                }
+            ],
+            enemies: [
+                {
+                    x: 3,
+                    y: 3
                 }
             ],
             player: {
@@ -95,12 +106,11 @@ export default class levelOne {
             { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }, { x: 0, y: 5 }, { x: 0, y: 6 }, { x: 0, y: 7 }, { x: 0, y: 8 }, { x: 0, y: 9 }, { x: 0, y: 10 }, { x: 0, y: 11 }, { x: 0, y: 12 }, { x: 0, y: 13 }, { x: 0, y: 14 }, { x: 1, y: 0 }, { x: 1, y: 14 }, { x: 2, y: 0 }, { x: 2, y: 14 }, { x: 3, y: 0 }, { x: 3, y: 14 }, { x: 4, y: 0 }, { x: 4, y: 14 }, { x: 5, y: 0 }, { x: 5, y: 14 }, { x: 6, y: 0 }, { x: 6, y: 14 }, { x: 7, y: 0 }, { x: 7, y: 14 }, { x: 8, y: 0 }, { x: 8, y: 14 }, { x: 9, y: 0 }, { x: 9, y: 1 }, { x: 9, y: 2 }, { x: 9, y: 3 }, { x: 9, y: 4 }, { x: 9, y: 5 }, { x: 9, y: 6 }, { x: 9, y: 7 }, { x: 9, y: 8 }, { x: 9, y: 9 }, { x: 9, y: 10 }, { x: 9, y: 11 }, { x: 9, y: 12 }, { x: 9, y: 13 }, { x: 9, y: 14 }
         ];
         this.Sprites = {
-            Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png", coin: "static/Coin.png" },
+            Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png", coin: "static/Coin.png", enemy: "static/Enemy.png", door: "static/Door.png" },
             LoadedSprites: {}
         };
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState == "visible") {
-                console.log("e");
                 this.continue = true;
                 this.AnimRequest = (() => { return requestAnimationFrame((t) => { this.gameFrame(t); }); })();
             }
@@ -134,6 +144,11 @@ export default class levelOne {
     }
     setVars() {
         this.GameStats = {
+            door: {
+                opened: false,
+                x: 14,
+                y: 9,
+            },
             coins: [
                 {
                     x: 10,
@@ -146,6 +161,12 @@ export default class levelOne {
                     y: 5,
                     pos: 0,
                     count: 0
+                }
+            ],
+            enemies: [
+                {
+                    x: 3,
+                    y: 3
                 }
             ],
             player: {
@@ -219,21 +240,46 @@ export default class levelOne {
                 this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);
                 this.drawTilemap();
                 this.renderCoins();
+                this.renderEnemies();
+                this.collisionEnemies();
                 this.collisionCoins();
-                this.drawSprite(this.GameStats.player.pos.x, this.GameStats.player.pos.y);
-                this.renderCounter();
-                let x = this.movement(timestamp);
-                this.GameStats.Time.Time = timestamp;
-                if (x == "a") {
-                    this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t); });
+                let ended = this.collisionDoor();
+                if (ended) {
+                    alert("Good Job You completed it");
                 }
-                else if (x == "b") {
-                    this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t); });
-                }
-                else if (x == "c") {
-                    this.setVars();
+                else {
+                    this.renderDoor();
+                    this.drawSprite(this.GameStats.player.pos.x, this.GameStats.player.pos.y);
+                    this.renderCounter();
+                    let x = this.movement(timestamp);
+                    this.GameStats.Time.Time = timestamp;
+                    if (x == "a") {
+                        this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t); });
+                    }
+                    else if (x == "b") {
+                        this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t); });
+                    }
+                    else if (x == "c") {
+                        this.setVars();
+                    }
                 }
             }
+        }
+    }
+    renderDoor() {
+        if (this.GameStats.door.opened) {
+            this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 16, 0, 16, 16, (this.GameStats.door.x - 1) * this.Canvas.Tw, (this.GameStats.door.y - 1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+        }
+        else {
+            this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.door, 0, 0, 16, 16, (this.GameStats.door.x - 1) * this.Canvas.Tw, (this.GameStats.door.y - 1) * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+        }
+    }
+    collisionDoor() {
+        if (this.collision({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, { x: this.GameStats.door.x - 1, y: this.GameStats.door.y - 1, width: 1, height: 1 }) && this.GameStats.door.opened) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
     resizeCanvas() {
@@ -321,6 +367,9 @@ export default class levelOne {
             if (this.collision({ x: this.GameStats.coins[i].x, y: this.GameStats.coins[i].y, width: 1, height: 1 }, { x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height })) {
                 this.GameStats.player.score++;
                 this.GameStats.coins.splice(i, 1);
+                if (this.GameStats.coins.length == 0) {
+                    this.GameStats.door.opened = true;
+                }
                 return;
             }
         }
@@ -329,7 +378,7 @@ export default class levelOne {
     renderCoins() {
         for (let i = 0; i < this.GameStats.coins.length; i++) {
             this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.coin, 16 * this.GameStats.coins[i].pos, 0, 16, 16, this.GameStats.coins[i].x * this.Canvas.Tw, this.GameStats.coins[i].y * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
-            if (this.GameStats.coins[i].count == 5) {
+            if (this.GameStats.coins[i].count == 10) {
                 this.GameStats.coins[i].count = 0;
                 if (this.GameStats.coins[i].pos == 8) {
                     this.GameStats.coins[i].pos = 0;
@@ -375,6 +424,19 @@ export default class levelOne {
         this.Canvas.Ctx.textBaseline = 'hanging';
         this.Canvas.Ctx.fillStyle = "#fbf7ff";
         this.Canvas.Ctx.fillText(text, this.Canvas.Ctx.measureText(text).width / 2 + (this.Canvas.Th * 0.1), this.Canvas.Th * 0.1);
+    }
+    renderEnemies() {
+        for (let i = 0; i < this.GameStats.enemies.length; i++) {
+            this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.enemy, 0, 0, 16, 16, (this.GameStats.enemies[i].x - 1) * this.Canvas.Tw, (this.GameStats.enemies[i].y - 1.5) * this.Canvas.Tw, this.Canvas.Tw, this.Canvas.Th);
+        }
+    }
+    collisionEnemies() {
+        for (let i = 0; i < this.GameStats.enemies.length; i++) {
+            if (this.collision({ x: this.GameStats.enemies[i].x - 1, y: this.GameStats.enemies[i].y - 1, width: 1, height: 1 }, { x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height })) {
+                this.setVars();
+                return;
+            }
+        }
     }
     drawTilemap() {
         this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);

@@ -8,7 +8,7 @@
     "jsx": "react",
     "allowJs": true,
     "sourceMap": true,
-    "types": ["node"],
+    "types": ["node", "jquery"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "outDir": "js",

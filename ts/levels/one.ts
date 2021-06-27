@@ -8,6 +8,18 @@ interface Sprite {
   height: number,
 }
 
+// function lalist(tiles) {
+//   let arr = []
+//   for (let i = 0; i < tiles.length; i++) {
+//     for (let j = 0; j < tiles[i].length; j++) {
+//       if (tiles[i][j] != 5) {
+//         arr.push({ x: i, y: j })
+//       }
+//     }
+//   }
+// }
+
+
 export default class levelOne {
   Canvas = {
     Tw: 0,
@@ -15,6 +27,29 @@ export default class levelOne {
     OriginalCanvas: <HTMLCanvasElement>document.getElementById("dungeons-game"),
     Canvas: <HTMLCanvasElement>document.getElementById("dungeons-game"),
     Ctx: <CanvasRenderingContext2D>(<HTMLCanvasElement>document.getElementById("dungeons-game")).getContext("2d"),
+  }
+
+  continue = true;
+
+  constructor() {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState == "visible") {
+        console.log("e");
+        this.continue = true;
+        this.AnimRequest = (() => { return requestAnimationFrame((t) => { this.gameFrame(t) }) })();
+      }
+    });
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key == "ArrowUp" || e.key == "w") {
+        this.GameStats.player.facing = "up";
+      } else if (e.key == "ArrowDown" || e.key == "s") {
+        this.GameStats.player.facing = "down";
+      } else if (e.key == "ArrowRight" || e.key == "d") {
+        this.GameStats.player.facing = "right";
+      } else if (e.key == "ArrowLeft" || e.key == "a") {
+        this.GameStats.player.facing = "left";
+      }
+    })
   }
 
   async init() {
@@ -34,11 +69,26 @@ export default class levelOne {
 
   setVars() {
     this.GameStats = {
+      coins: [
+        {
+          x: 10,
+          y: 1,
+          pos: 0,
+          count: 0
+        },
+        {
+          x: 5,
+          y: 5,
+          pos: 0,
+          count: 0
+        }
+      ],
       player: {
         pos: {
           x: 1,
           y: 1,
         },
+        score: 0,
         width: 1,
         height: 1,
         facing: "right",
@@ -93,40 +143,36 @@ export default class levelOne {
     }
 
     //Stretch Canvas
-    this.resizeCanvas();
-    window.onresize = () => { this.resizeCanvas(); };
+    this.GameStats.player.speed = 5 / (Math.round((window.outerWidth / window.innerWidth) * 100) * 0.01)
 
     requestAnimationFrame((t) => { this.gameFrame(t) });
   }
-  constructor() {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key == "ArrowUp" || e.key == "w") {
-        this.GameStats.player.facing = "up";
-      } else if (e.key == "ArrowDown" || e.key == "s") {
-        this.GameStats.player.facing = "down";
-      } else if (e.key == "ArrowRight" || e.key == "d") {
-        this.GameStats.player.facing = "right";
-      } else if (e.key == "ArrowLeft" || e.key == "a") {
-        this.GameStats.player.facing = "left";
-      }
-    })
-  }
+
+  //@ts-ignore
+  AnimRequest;
 
   gameFrame(timestamp: number) {
-    if (this.GameStats.Time.Time == 0) {
-      this.GameStats.Time.Time = timestamp;
-      requestAnimationFrame((t) => { this.gameFrame(t) });
-    } else {
-      this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);
-      this.drawTilemap();
-      this.drawSprite(this.GameStats.player.pos.x, this.GameStats.player.pos.y);
-      let x = this.movement(timestamp)
-      this.GameStats.Time.Time = timestamp;
-      if (!x) {
-        requestAnimationFrame((t) => { this.gameFrame(t) });        
+    if (this.continue) {
+      if (this.GameStats.Time.Time == 0) {
+        this.GameStats.Time.Time = timestamp;
+        this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t) });
       } else {
-        alert("Ur Dead. We're restarting");
-        this.setVars();          
+        this.Canvas.Ctx.clearRect(0, 0, this.Canvas.Canvas.width, this.Canvas.Canvas.height);
+        this.drawTilemap();
+        this.renderCoins();
+        this.collisionCoins();
+        this.drawSprite(this.GameStats.player.pos.x, this.GameStats.player.pos.y);
+        this.renderCounter();
+        let x = this.movement(timestamp)
+        this.GameStats.Time.Time = timestamp;
+        if (x == "a") {
+          this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t) });
+        } else if (x == "b") {
+          this.AnimRequest = requestAnimationFrame((t) => { this.gameFrame(t) });
+        } else if (x == "c") {
+
+          this.setVars();
+        }
       }
     }
   }
@@ -177,32 +223,63 @@ export default class levelOne {
   }
 
   movement(timestamp: number) {
-    if (this.GameStats.player.facing == "right") {
-      this.GameStats.player.pos.x += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
-    }else if (this.GameStats.player.facing == "left") {
-      this.GameStats.player.pos.x -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
-    }else if (this.GameStats.player.facing == "down") {
-      this.GameStats.player.pos.y += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);      
-    }else if (this.GameStats.player.facing == "up") {
-      this.GameStats.player.pos.y -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
-    }
-    if (!this.collisionList({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, this.collisionBoundaries.map(e => {
-      return { width: 1, height: 1, x: e.y, y: e.x };
-    }))) {
-      if (this.GameStats.Time.LastFrameAnimation == 0) {
-        this.GameStats.player.position == 2 ? this.GameStats.player.position = 0 : this.GameStats.player.position++;
-        this.GameStats.Time.LastFrameAnimation++;
-      } else if (this.GameStats.Time.LastFrameAnimation == 5) {
-        this.GameStats.Time.LastFrameAnimation = 0;
-      } else {
-        this.GameStats.Time.LastFrameAnimation++;
-      }
-      return false;
+    if (timestamp - this.GameStats.Time.Time > 500) {
+      console.log("Time Skip");
+      return "a";
     } else {
-      return true;
+      if (this.GameStats.player.facing == "right") {
+        this.GameStats.player.pos.x += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+      } else if (this.GameStats.player.facing == "left") {
+        this.GameStats.player.pos.x -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+      } else if (this.GameStats.player.facing == "down") {
+        this.GameStats.player.pos.y += this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+      } else if (this.GameStats.player.facing == "up") {
+        this.GameStats.player.pos.y -= this.GameStats.player.speed * ((timestamp - this.GameStats.Time.Time) / 1000);
+      }
+      if (!this.collisionList({ x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height }, this.collisionBoundaries.map(e => {
+        return { width: 1, height: 1, x: e.y, y: e.x };
+      }))) {
+        if (this.GameStats.Time.LastFrameAnimation == 0) {
+          this.GameStats.player.position == 2 ? this.GameStats.player.position = 0 : this.GameStats.player.position++;
+          this.GameStats.Time.LastFrameAnimation++;
+        } else if (this.GameStats.Time.LastFrameAnimation == 10) {
+          this.GameStats.Time.LastFrameAnimation = 0;
+        } else {
+          this.GameStats.Time.LastFrameAnimation++;
+        }
+        return "b";
+      } else {
+        return "c";
+      }
     }
   }
 
+  collisionCoins() {
+    for (let i = 0; i < this.GameStats.coins.length; i++) {
+      if (this.collision({ x: this.GameStats.coins[i].x, y: this.GameStats.coins[i].y, width: 1, height: 1 }, { x: this.GameStats.player.pos.x, y: this.GameStats.player.pos.y, width: this.GameStats.player.width, height: this.GameStats.player.height })) {
+        this.GameStats.player.score++;
+        this.GameStats.coins.splice(i, 1);
+        return;
+      }
+    }
+    return;
+  }
+
+  renderCoins() {
+    for (let i = 0; i < this.GameStats.coins.length; i++) {
+      this.Canvas.Ctx.drawImage(this.Sprites.LoadedSprites.coin, 16 * this.GameStats.coins[i].pos, 0, 16, 16, this.GameStats.coins[i].x * this.Canvas.Tw, this.GameStats.coins[i].y * this.Canvas.Th, this.Canvas.Tw, this.Canvas.Th);
+      if (this.GameStats.coins[i].count == 5) {
+        this.GameStats.coins[i].count = 0;
+        if (this.GameStats.coins[i].pos == 8) {
+          this.GameStats.coins[i].pos = 0          
+        } else {
+          this.GameStats.coins[i].pos++
+        }
+      } else {
+        this.GameStats.coins[i].count++;
+      }
+    }
+  }
 
   collision(obj1: Sprite, obj2: Sprite) {
     if (obj1.x < obj2.x + obj2.width &&
@@ -216,7 +293,6 @@ export default class levelOne {
   }
 
   collisionList(obj: Sprite, list: Array<Sprite>) {
-    let isCollision = false;
     let collided = false;
     for (let i = 0; i < list.length; i++) {
       if (this.collision(obj, list[i])) {
@@ -227,12 +303,40 @@ export default class levelOne {
     return collided;
   }
 
+  renderCounter() {
+    this.Canvas.Ctx.font = `${this.Canvas.Th}px 'VT323'`;
+    let text = `Score: ${this.GameStats.player.score}/2, Level 1`;
+    let textWidth = this.Canvas.Ctx.measureText(text).width;
+    this.Canvas.Ctx.globalAlpha = 0.5;
+    this.Canvas.Ctx.fillStyle = "#000000";
+    this.Canvas.Ctx.fillRect(0, 0, textWidth + 10, this.Canvas.Th);
+    this.Canvas.Ctx.globalAlpha = 1.0;
+    this.Canvas.Ctx.textBaseline = 'hanging';
+    this.Canvas.Ctx.fillStyle = "#fbf7ff";
+    this.Canvas.Ctx.fillText(text, this.Canvas.Ctx.measureText(text).width / 2 + (this.Canvas.Th * 0.1), this.Canvas.Th * 0.1);
+  }
+
   GameStats = {
+    coins: [
+      {
+        x: 10,
+        y: 1,
+        pos: 0,
+        count: 0
+      },
+      {
+        x: 5,
+        y: 5,
+        pos: 0,
+        count: 0
+      }
+    ],
     player: {
       pos: {
         x: 1,
         y: 1,
       },
+      score: 0,
       width: 1,
       height: 1,
       facing: "right",
@@ -309,7 +413,7 @@ export default class levelOne {
   }
 
   Sprites: any = {
-    Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png" },
+    Locations: { player: "static/Meteor.png", tileMap: "static/Tilemap.png", coin: "static/Coin.png" },
     LoadedSprites: {}
   }
 }
